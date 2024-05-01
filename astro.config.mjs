@@ -12,12 +12,5 @@ export default defineConfig({
     host: true,
     port: 8080
   },
-  output: "hybrid",
-  adapter: cloudflare({
-    runtime: "local",
-    routes: {
-      strategy: 'include',
-      include: ['/auth/*']
-    }
-  })
+  output: "hybrid"
 });

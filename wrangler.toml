@@ -1,6 +1,0 @@
-compatibility_date = "2023-10-10"
-
-[[d1_databases]]
-binding = "DB" # i.e. available in your Worker on env.DB
-database_name = "DB"
-database_id = "77bb3263-bf9e-4441-8e35-51e0e87693c2"
