@@ -1,0 +1,225 @@
+---
+
+export const prerender = false;
+
+import {isDevMode} from "../../lib/devmode";
+import {AdvancedRuntime} from "@astrojs/cloudflare";
+import {LuciaError} from "lucia";
+import SiteLayout from "../../layouts/SiteLayout.astro";
+import ErrorMessage from "../../components/ErrorMessage.astro";
+import {getAuth, getDB, isEmailValid, isPasswordValid} from '../../lib/lucia';
+import {isWithinExpiration, generateRandomString} from "lucia/utils";
+import {isTurnStileValid, turnStileSiteKey} from "../../lib/turnstile";
+
+let errorMessages = [];
+
+const EXPIRES_IN = 1000 * 60 * 60 * 2; // 2 hours
+
+const generateEmailVerificationToken = async (runtime: AdvancedRuntime, userId: string) => {
+    const db = getDB(runtime);
+
+    const tokens = await db.selectFrom('email_verification_token')
+        .where('user_id', '=', userId)
+        .selectAll()
+        .execute();
+
+    if (tokens.length > 0) {
+        const reusableStoredToken = tokens.find((token) => {
+            return isWithinExpiration(Number(token.expires) - EXPIRES_IN / 2);
+        });
+        if (reusableStoredToken) {
+            return reusableStoredToken.token;
+        }
+    }
+
+    const token = generateRandomString(63);
+    const expires = new Date().getTime() + EXPIRES_IN;
+    await db.insertInto('email_verification_token')
+        .values({
+            token, expires, user_id: userId
+        })
+        .execute();
+
+    return token;
+};
+
+const authRequest = getAuth(Astro.locals.runtime).handleRequest(Astro);
+const session = await authRequest.validate();
+if (session !== null) {
+    return new Response(null, {
+        headers: {
+            Location: "/auth/ccp/apikeys"
+        },
+        status: 302
+    });
+}
+
+if (Astro.request.method === "POST") {
+    try {
+        const formData = await Astro.request.formData();
+        const email = formData.get('email') as string;
+        const password = formData.get('password') as string;
+
+        const turnStileValid = await isTurnStileValid(formData, isDevMode(Astro));
+        const validMail = isEmailValid(email);
+        const validPassword = isPasswordValid(password);
+
+        if (!validMail) {
+            errorMessages.push('Invalid email address');
+        }
+
+        if (!validPassword) {
+            errorMessages.push('Invalid password (required: at least 8 characters)');
+        }
+
+        if (!turnStileValid) {
+            errorMessages.push('Challenge not solved')
+        }
+
+        if (turnStileValid && validMail && validPassword) {
+            const auth = getAuth(Astro.locals.runtime);
+
+            const user = await auth.createUser({
+                key: {
+                    providerId: 'email',
+                    providerUserId: email.toLowerCase(),
+                    password: password
+                },
+                attributes: {
+                    email: email.toLowerCase(),
+                    email_verified: 0
+                }
+            });
+            console.info('user created: ', email.toLowerCase());
+
+            const session = await auth.createSession({
+                userId: user.userId,
+                attributes: {}
+            });
+            console.info('session created: ', {
+                'email': email.toLowerCase(),
+                'session': session
+            });
+
+            const emailVerificationToken = await generateEmailVerificationToken(Astro.locals.runtime, user.userId);
+            const response = await fetch(import.meta.env.POSTMARK_SERVER_API_URL || 'https://api.postmarkapp.com/email', {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    'X-Postmark-Server-Token': import.meta.env.POSTMARK_SERVER_API_TOKEN
+                },
+                body: JSON.stringify({
+                    'From': 'felix@triptix.tech',
+                    'To': email,
+                    'Subject': 'triptix Account Activation',
+                    'TextBody': `Hello! Almost done. Visit this link to activate your accout: ${Astro.url.protocol}//${Astro.url.host}/auth/activate?token=${emailVerificationToken}`,
+                    'MessageStream': 'outbound'
+                })
+            });
+            console.info('session created: ', {
+                'email': email.toLowerCase(),
+                'response_status': response.status,
+                'response_body': response.body
+            });
+
+            const sessionCookie = auth.createSessionCookie(session);
+            console.info('setting session cookie: ', session, sessionCookie);
+            return new Response(null, {
+                headers: {
+                    Location: "/auth/ccp/apikeys",
+                    "Set-Cookie": sessionCookie.serialize()
+                },
+                status: 302
+            });
+        }
+    } catch (e) {
+        if (e instanceof LuciaError && e.message == 'AUTH_DUPLICATE_KEY_ID') {
+            errorMessages.push('email already registered');
+        } else {
+            errorMessages.push('Database Error! Please email us at <a href="mailto: felix@triptix.tech">felix@triptix.tech</a>')
+            console.error({message: e.message});
+            console.error(e.stack);
+        }
+    }
+}
+
+const turnStileKey = isDevMode(Astro) ? '1x00000000000000000000AA' : turnStileSiteKey;
+---
+
+<SiteLayout>
+    <div class="mx-auto flex flex-col justify-center grow py-8">
+        <div class="flex flex-col items-center gap-6 mt-8">
+            <a href="/auth/google/login" class="w-full font-semibold rounded-xl py-2 md:py-3 border-gray-600 border text-gray-100 flex items-center justify-center transition-all duration-300 ease-in-out focus:outline-none focus:shadow-sm focus:shadow-outline font-medium tracking-tight shadow-[0_2px_16px_rgba(255,255,255,.2)] hover:shadow-[0_4px_16px_rgba(255,255,255,.3)] hover:-translate-y-0.5">
+                <div class="bg-white p-2 rounded-full">
+                    <svg class="w-4" viewBox="0 0 533.5 544.3">
+                        <path d="M533.5 278.4c0-18.5-1.5-37.1-4.7-55.3H272.1v104.8h147c-6.1 33.8-25.7 63.7-54.4 82.7v68h87.7c51.5-47.4 81.1-117.4 81.1-200.2z"
+                              fill="#4285f4"/>
+                        <path d="M272.1 544.3c73.4 0 135.3-24.1 180.4-65.7l-87.7-68c-24.4 16.6-55.9 26-92.6 26-71 0-131.2-47.9-152.8-112.3H28.9v70.1c46.2 91.9 140.3 149.9 243.2 149.9z"
+                              fill="#34a853"/>
+                        <path d="M119.3 324.3c-11.4-33.8-11.4-70.4 0-104.2V150H28.9c-38.6 76.9-38.6 167.5 0 244.4l90.4-70.1z"
+                              fill="#fbbc04"/>
+                        <path d="M272.1 107.7c38.8-.6 76.3 14 104.4 40.8l77.7-77.7C405 24.6 339.7-.8 272.1 0 169.2 0 75.1 58 28.9 150l90.4 70.1c21.5-64.5 81.8-112.4 152.8-112.4z"
+                              fill="#ea4335"/>
+                    </svg>
+                </div>
+                <span class="ml-4">Login with Google</span>
+            </a>
+
+            <a href="/auth/github/login" class="w-full font-semibold rounded-xl py-2 md:py-3 border-gray-600 border text-gray-100 flex items-center justify-center transition-all duration-300 ease-in-out focus:outline-none focus:shadow-sm focus:shadow-outline font-medium tracking-tight shadow-[0_2px_16px_rgba(255,255,255,.2)] hover:shadow-[0_4px_16px_rgba(255,255,255,.3)] hover:-translate-y-0.5">
+                <div class="bg-white p-1 rounded-full">
+                    <svg class="w-6" viewBox="0 0 32 32">
+                        <path fill-rule="evenodd"
+                              d="M16 4C9.371 4 4 9.371 4 16c0 5.3 3.438 9.8 8.207 11.387.602.11.82-.258.82-.578 0-.286-.011-1.04-.015-2.04-3.34.723-4.043-1.609-4.043-1.609-.547-1.387-1.332-1.758-1.332-1.758-1.09-.742.082-.726.082-.726 1.203.086 1.836 1.234 1.836 1.234 1.07 1.836 2.808 1.305 3.492 1 .11-.777.422-1.305.762-1.605-2.664-.301-5.465-1.332-5.465-5.93 0-1.313.469-2.383 1.234-3.223-.121-.3-.535-1.523.117-3.175 0 0 1.008-.32 3.301 1.23A11.487 11.487 0 0116 9.805c1.02.004 2.047.136 3.004.402 2.293-1.55 3.297-1.23 3.297-1.23.656 1.652.246 2.875.12 3.175.77.84 1.231 1.91 1.231 3.223 0 4.61-2.804 5.621-5.476 5.922.43.367.812 1.101.812 2.219 0 1.605-.011 2.898-.011 3.293 0 .32.214.695.824.578C24.566 25.797 28 21.3 28 16c0-6.629-5.371-12-12-12z"/>
+                    </svg>
+                </div>
+                <span class="ml-4">Login with GitHub</span>
+            </a>
+        </div>
+
+        <div class="my-8 md:my-12 border-b text-center">
+            <div class="leading-none px-2 inline-block text-sm text-gray-200 tracking-wide font-medium bg-black transform translate-y-3/4">
+                or sign up with e-mail
+            </div>
+        </div>
+
+        <div class="mx-auto max-w-xs">
+            {errorMessages.length !== 0 && <ErrorMessage errors={errorMessages}/> }
+            <form method="post">
+                <input class="mt-4 w-full px-8 py-4 rounded-lg text-white font-medium bg-zinc-950 border border-gray-400 placeholder-gray-400 text-sm focus:outline-none focus:border-gray-400 focus:bg-zinc-900"
+                       name="email"
+                       type="email"
+                       placeholder="Email"/>
+                <input class="mt-4 w-full px-8 py-4 rounded-lg text-white font-medium bg-zinc-950 border border-gray-400 placeholder-gray-400 text-sm focus:outline-none focus:border-gray-400 focus:bg-zinc-900"
+                       name="password"
+                       type="password"
+                       placeholder="Password"/>
+
+                <div class="flex justify-center mt-4 cf-turnstile" data-theme="dark" data-sitekey={turnStileKey}></div>
+                <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+
+                <button type="submit"
+                        class="mt-6 w-full inline-flex items-center justify-center transition-colors hover:text-grey-80 gap-2 rounded-lg border-2 border-white text-white h-11 px-[22px] text-16 font-medium leading-snug tracking-tighter shadow-[0_6px_16px_rgba(255,255,255,.2)] hover:shadow-[0_6px_20px_rgba(255,255,255,.4)] hover:-translate-y-0.5 duration-200 md:text-14 md:h-10 md:px-4.5">
+                    Sign Up
+                    <svg xmlns="http://www.w3.org/2000/svg" width="6" height="12" fill="none" class="mt-px"
+                         aria-hidden="true">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6"
+                              d="m1 1 4 4-4 4"></path>
+                    </svg>
+                </button>
+            </form>
+            <p class="mt-16 text-xs text-gray-300 text-center">
+                By signing up, I agree to the<br>
+                <a href="/tos" class="border-b border-gray-100 border-dotted">
+                    Terms of Service
+                </a>
+                and
+                <a href="/privacy" class="border-b border-gray-100 border-dotted">
+                    Privacy Policy
+                </a>
+                <br>
+                of triptix GmbH
+            </p>
+        </div>
+    </div>
+</SiteLayout>

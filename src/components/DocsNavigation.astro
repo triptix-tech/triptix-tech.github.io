@@ -1,0 +1,54 @@
+---
+import BaseHead from '../components/BaseHead.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import HamburgerMenu from '../components/HamburgerMenu.astro';
+
+import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
+import { getCollection } from 'astro:content';
+
+const pathname = new URL(Astro.request.url).pathname;
+const apis = (await getCollection('api'));
+const guides = (await getCollection('guides'));
+---
+
+<div class="w-48 hidden md:block">
+    <ul class="space-y-8">
+        <li>
+            <span class="px-4 py-1 mb-4 md:mb-3 font-semibold text-gray-200">Guides</span>
+            <ul class="mt-2 text-gray-300">
+                {
+                    guides.map((guide) => (
+                            <li>
+                                <a class="block px-4 py-2 rounded-lg"
+                                   class:list={[{'bg-[#120a1a]': pathname === `/guides/${guide.slug}/`,
+                                       'hover:bg-zinc-900': pathname !== `/guides/${guide.slug}/`,
+                                       'hover:text-gray-100': pathname !== `/guides/${guide.slug}/`}]}
+                                   href={`/guides/${guide.slug}/`}>
+                                    {guide.data.title}
+                                </a>
+                            </li>
+                    ))
+                }
+            </ul>
+        </li>
+        <li>
+            <span class="px-4 py-1 mb-4 md:mb-3 font-semibold text-gray-200">API Reference</span>
+            <ul class="mt-2 text-gray-300">
+                {
+                    apis.map((api) => (
+                        <li>
+                            <a class="block px-4 py-2 rounded-lg"
+                               class:list={[{'bg-[#120a1a]': pathname === `/api/${api.slug}/`,
+                                             'hover:bg-zinc-900': pathname !== `/api/${api.slug}/`,
+                                             'hover:text-gray-100': pathname !== `/api/${api.slug}/`}]}
+                               href={`/api/${api.slug}/`}>
+                                {api.data.title}
+                            </a>
+                        </li>
+                    ))
+                }
+            </ul>
+        </li>
+    </ul>
+</div>

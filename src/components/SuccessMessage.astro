@@ -1,0 +1,16 @@
+---
+import ObjectProperty from './ObjectProperty.astro';
+
+interface Props {
+    errors: string[];
+    classNames: string[];
+}
+const {msg, classNames = []} = Astro.props;
+---
+
+{
+    msg.length !== 0 &&
+        <div class={"p-4 my-4 text-sm rounded-lg bg-green-950 border-green-500 text-white border-2 font-bold w-full shadow-[0_6px_20px_rgba(0,255,0,.45)] " + classNames}>
+            <p><span set:html={msg}></span></p>
+        </div>
+}

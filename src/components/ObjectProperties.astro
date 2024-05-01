@@ -1,0 +1,19 @@
+---
+import ObjectProperty from './ObjectProperty.astro';
+const {spec, nested= false} = Astro.props;
+---
+
+<details class="p-4 bg-zinc-950 rounded" class:list={[{'pb-0': nested, 'mt-2': !nested}]}>
+    <summary role="button" aria-expanded="false">
+        <span>
+            Properties of <code class="font-semibold text-sm">{spec.title}</code>
+        </span>
+    </summary>
+    <table class="mt-2 border-l-4 border-l-zinc-800">
+        {
+            Object.entries(spec.properties).map(([key, value]) => (
+                <ObjectProperty key={key} value={value} required={spec.required}></ObjectProperty>
+            ))
+        }
+    </table>
+</details>

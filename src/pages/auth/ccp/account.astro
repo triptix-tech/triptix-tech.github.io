@@ -1,0 +1,73 @@
+---
+import SuccessMessage from "../../../components/SuccessMessage.astro";
+export const prerender = false;
+
+import {isPasswordValid} from "../../../lib/lucia";
+import {getAuth} from "../../../lib/lucia";
+import CCP from '../../../layouts/CCP.astro';
+import ErrorMessage from "../../../components/ErrorMessage.astro";
+
+const auth = getAuth(Astro.locals.runtime);
+const authRequest = auth.handleRequest(Astro);
+const session = await authRequest.validate();
+if (session == null) {
+    return new Response(null, {
+        headers: {
+            Location: "/auth/login"
+        },
+        status: 302
+    });
+}
+
+let message = "";
+const errors = [];
+if (Astro.request.method === 'POST') {
+    try {
+        const formData = await Astro.request.formData();
+        const password = formData.get('password') as string;
+
+        const validPassword = isPasswordValid(password);
+        if (!validPassword) {
+            errors.push('Invalid password (required: at least 8 characters)');
+        }
+
+        if (validPassword) {
+            await auth.invalidateAllUserSessions(session.user.userId);
+            const newSession = await auth.createSession({
+                userId: user.userId,
+                attributes: {}
+            });
+            const sessionCookie = auth.createSessionCookie(newSession);
+            return new Response(null, {
+                headers: {
+                    Location: "/auth/ccp/apikeys?success=pwreset",
+                    "Set-Cookie": sessionCookie.serialize()
+                },
+                status: 302
+            });
+        }
+    } catch (e) {
+        errors.push('Database error.');
+        console.error({message: e.message});
+        console.error(e.stack);
+    }
+}
+---
+
+<CCP>
+    {errors.length !== 0 &&
+            <ErrorMessage errors={errors}/>}
+    {message.length !== 0 &&
+            <SuccessMessage msg={message} classNames={"mb-8"}/>}
+    <form method="post">
+        <input class="w-full px-8 py-4 rounded-lg text-white font-medium bg-zinc-950 border border-gray-400 placeholder-gray-400 text-sm focus:outline-none focus:border-gray-400 focus:bg-zinc-900"
+               name="password"
+               type="password"
+               placeholder="Password"/>
+
+        <a href="#"
+           class="mt-4 flex-none group p-2 md:p-2 bg-red-950 hover:bg-red-900 border border-red-700 hover:border-red-500 rounded-lg flex items-center justify-center gap-2 text-gray-300 hover:text-white">
+            Reset Password
+        </a>
+    </form>
+</CCP>

@@ -1,0 +1,39 @@
+<style>
+    #menu {
+        display: none;
+        transition: all 0.15s ease-in-out;
+        transform: translateY(-100%);
+    }
+
+    #menu:target {
+        display: block;
+        transform: translateX(0);
+    }
+</style>
+
+<div id="menu" class="fixed flex flex-col z-10 w-full h-screen bg-zinc-950">
+    <div class="w-full flex flex-row justify-end">
+        <a class="shink rounded display-block w-fit mt-8 mr-8" href="#">
+            <svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" fill="white" width="32" height="32">
+                <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path>
+            </svg>
+        </a>
+    </div>
+    <ul class="flex-1 text-center">
+        <li class="bg-zinc-900 rounded m-8 border-2 border-zinc-800 shadow">
+            <a class="py-4 w-full h-full block font-semibold" href="/docs">Docs</a>
+        </li>
+        <li class="bg-zinc-900 rounded m-8 border-2 border-zinc-800 shadow">
+            <a class="py-4 w-full h-full block font-semibold" href="/pricing">Pricing</a>
+        </li>
+        <li class="bg-zinc-900 rounded m-8 border-2 border-zinc-800 shadow">
+            <a class="py-4 w-full h-full block font-semibold" href="/blog">Blog</a>
+        </li>
+        <li class="bg-zinc-900 rounded m-8 border-2 border-zinc-800 shadow">
+            <a class="py-4 w-full h-full block font-semibold" href="/auth/login">Login</a>
+        </li>
+        <li class="bg-zinc-900 rounded m-8 border-2 border-zinc-800 shadow">
+            <a class="py-4 w-full h-full block font-semibold" href="/auth/signup">Sign Up</a>
+        </li>
+    </ul>
+</div>

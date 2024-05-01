@@ -1,0 +1,40 @@
+.marker {
+    padding-bottom: 0.2em;
+    padding-left: 0.1em;
+    padding-right: 0.1em;
+    background-image: linear-gradient(to right, #53bff9 0%, #da35cc 100%);
+    background-repeat: repeat-x;
+    background-position: 0 100%;
+    background-size: 100% 3px;
+}
+
+.glow {
+    box-shadow: 0 6px 10px rgba(218, 53, 204, .3);
+}
+
+.glow:hover {
+    box-shadow: 0 8px 12px rgba(218, 53, 204, .4)
+}
+
+.hover-scale:hover {
+    transform: scale(1.1);
+}
+
+.property:last-child > td > div {
+    border-bottom: 0 !important;
+    padding-bottom: 0.5em !important;
+}
+
+:root {
+    --astro-code-color-text: #EEEEEE;
+    --astro-code-color-background: transparent;
+    --astro-code-token-constant: #BD93F9;
+    --astro-code-token-string: #E9F284;
+    --astro-code-token-comment: #6272A4;
+    --astro-code-token-keyword: #53bff9;
+    --astro-code-token-parameter: #FFB86C;
+    --astro-code-token-function: #50FA7B;
+    --astro-code-token-string-expression: #ff9cf7;
+    --astro-code-token-punctuation: #FF79C6;
+    --astro-code-token-link: #8BE9FD;
+}

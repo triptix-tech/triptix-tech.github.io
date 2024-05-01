@@ -1,0 +1,154 @@
+---
+export const prerender = false;
+
+import {isDevMode} from "../../../lib/devmode";
+import {generateRandomString, isWithinExpiration} from "lucia/utils";
+import {AdvancedRuntime} from "@astrojs/cloudflare";
+import {LuciaError} from "lucia";
+import SiteLayout from "../../../layouts/SiteLayout.astro";
+import ErrorMessage from "../../../components/ErrorMessage.astro";
+import SuccessMessage from "../../../components/SuccessMessage.astro";
+import {getAuth, getDB, isEmailValid, isPasswordValid} from '../../../lib/lucia';
+import {isTurnStileValid, turnStileSiteKey} from "../../../lib/turnstile";
+
+let errorMessages = [];
+
+const authRequest = getAuth(Astro.locals.runtime).handleRequest(Astro);
+const session = await authRequest.validate();
+if (session !== null) {
+    return new Response(null, {
+        headers: {
+            Location: "/auth/ccp/apikeys"
+        },
+        status: 302
+    });
+}
+
+const EXPIRES_IN = 1000 * 60 * 60 * 1; // 2 hours
+
+async function generatePasswordResetToken(runtime: AdvancedRuntime, userId: string) {
+    console.log('generatePasswordResetToken(', userId, ')');
+    const db = getDB(runtime);
+    const storedUserTokens = await db
+        .selectFrom('password_reset_token')
+        .where('user_id', '=', userId)
+        .selectAll()
+        .execute();
+    if (storedUserTokens.length > 0) {
+        const reusableStoredToken = storedUserTokens.find((token) => {
+            // check if expiration is within 1 hour
+            // and reuse the token if true
+            return isWithinExpiration(Number(token.expires) - EXPIRES_IN / 2);
+        });
+        if (reusableStoredToken) {
+            return reusableStoredToken.id;
+        }
+    }
+    const token = generateRandomString(63);
+    const expires = new Date().getTime() + EXPIRES_IN;
+    console.log('token=', token, ', expires=', expires);
+    await db
+        .insertInto("password_reset_token")
+        .values({
+            token, expires, user_id: userId
+        })
+        .executeTakeFirst();
+    return token;
+}
+
+async function sendPasswordResetLink(token: string, email: string) {
+    const postMarkURL = import.meta.env.POSTMARK_SERVER_API_URL || 'https://api.postmarkapp.com/email';
+    console.log('Request to ', postMarkURL);
+    const response = await fetch(postMarkURL, {
+        method: 'POST',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'X-Postmark-Server-Token': import.meta.env.POSTMARK_SERVER_API_TOKEN
+        },
+        body: JSON.stringify({
+            'From': 'felix@triptix.tech',
+            'To': email,
+            'Subject': 'triptix Password Reset Link',
+            'TextBody': `Click on the following link to reset your password: ${Astro.url.protocol}//${Astro.url.host}/auth/pwreset/reset?token=${token}`,
+            'MessageStream': 'outbound'
+        })
+    });
+    console.info('password reset link sent: ', {
+        'email': email.toLowerCase(),
+        'response_status': response.status,
+        'response_body': response.body
+    });
+}
+
+let success = false;
+
+if (Astro.request.method === "POST") {
+    try {
+        const formData = await Astro.request.formData();
+        const email = formData.get('email') as string;
+
+        const turnStileValid = await isTurnStileValid(formData, isDevMode(Astro));
+        const validMail = isEmailValid(email);
+
+        if (!validMail) {
+            errorMessages.push('Invalid email address');
+        }
+
+        if (!turnStileValid) {
+            errorMessages.push('Challenge not solved')
+        }
+
+        if (turnStileValid && validMail) {
+            const db = getDB(Astro.locals.runtime);
+            const storedUser = await db
+                .selectFrom('user_key')
+                .where('id', '=', 'email:' + email.toLowerCase())
+                .selectAll()
+                .executeTakeFirst();
+            if (storedUser) {
+                const token = await generatePasswordResetToken(Astro.locals.runtime, storedUser.user_id);
+                await sendPasswordResetLink(token, email);
+            }
+            success = true;
+        }
+    } catch (e) {
+        errorMessages.push('Database Error! Please email us at <a href="mailto: felix@triptix.tech">felix@triptix.tech</a>')
+        console.error({message: e.message});
+        console.error(e.stack);
+    }
+}
+
+const turnStileKey = isDevMode(Astro) ? '1x00000000000000000000AA' : turnStileSiteKey;
+---
+
+<SiteLayout>
+    <div class="flex mx-auto flex-col justify-center grow py-8">
+        <div class="mx-auto max-w-xs">
+            {success &&
+                    <SuccessMessage
+                            msg={"E-Mail sent. Please check your input and click on the password reset link."}/>}
+            {errorMessages.length !== 0 &&
+                    <ErrorMessage errors={errorMessages}/>}
+            <form method="post">
+                <input name="email"
+                       class="mt-4 w-full px-8 py-4 rounded-lg text-white font-medium bg-zinc-950 border border-gray-400 placeholder-gray-400 text-sm focus:outline-none focus:border-gray-400 focus:bg-zinc-900"
+                       type="email"
+                       placeholder="Email"/>
+
+                <div class="flex justify-center mt-4 cf-turnstile" data-theme="dark" data-sitekey={turnStileKey}></div>
+                <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+
+                <button type="submit"
+                        class="mt-6 w-full inline-flex items-center justify-center transition-colors hover:text-grey-80 gap-2 rounded-lg border-2 border-white text-white h-11 px-[22px] text-16 font-medium leading-snug tracking-tighter shadow-[0_6px_16px_rgba(255,255,255,.2)] hover:shadow-[0_6px_20px_rgba(255,255,255,.4)] hover:-translate-y-0.5 duration-200 md:text-14 md:h-10 md:px-4.5">
+                    Request Reset
+                    <svg xmlns="http://www.w3.org/2000/svg" width="6" height="12" fill="none" class="mt-px"
+                         aria-hidden="true">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6"
+                              d="m1 1 4 4-4 4"></path>
+                    </svg>
+                </button>
+            </form>
+        </div>
+    </div>
+</SiteLayout>

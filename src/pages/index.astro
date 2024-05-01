@@ -1,0 +1,159 @@
+---
+import SiteLayout from '../layouts/SiteLayout.astro';
+---
+
+<SiteLayout>
+    <div class="mx-auto max-w-7xl flex justify-center px-8 mt-16 mb-0 md:mb-8 md:mt-0 text-center md:text-left">
+        <!-- MARKETING -->
+        <div class="text-center">
+            <!--
+            <a href="/blog/release-1.0"
+               class="dark:bg-gray-800 bg-gradient-to-r uppercase from-ttblue to-ttpink inline-flex items-center text-white rounded-full py-1 px-1.5 sm:text-base lg:text-sm xl:text-base"><span
+                    class="bg-black text-white font-semibold px-2.5 py-0 lg:py-0.5 text-xs leading-5 tracking-tight rounded-full">New</span>
+                <span class="ml-2.5 lg:ml-3 text-xs md:text-sm font-semibold">triptix GeoCoder <span
+                        class="font-extrabold">1.0</span></span>
+                <svg xmlns="http://www.w3.org/2000/svg" class="text-white ml-2 w-4 h-4 transition transform"
+                     fill="none" viewbox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M13 5l7 7-7 7M5 5l7 7-7 7"></path>
+                </svg>
+            </a>
+            -->
+            <h1 class="text-[48pt] lg:text-[60pt] font-extrabold leading-none tracking-tight mt-4 pt-1 pb-2 bg-gradient-to-r from-ttblue to-ttpink bg-clip-text text-transparent"
+                style="text-shadow: 0 6px 17px rgba(218, 53, 204, .3)">
+                Algorithms for Future Mobility
+            </h1>
+            <p class="mt-8 sm:mt-4 text-lg text-base/loose md:leading-9">
+                You want to provide world class mobility solutions to your customers?
+            </p>
+            <a class="mt-8 inline-flex items-center justify-center transition-colors duration-200 hover:text-grey-80 transition-shadow items-center gap-2 rounded-full border-2 border-white text-white h-11 px-[22px] text-16 font-medium leading-snug tracking-tighter text-black shadow-[0_6px_16px_rgba(255,255,255,.2)] hover:shadow-[0_6px_20px_rgba(255,255,255,.4)] hover:-translate-y-0.5 transition-transform duration-200 md:text-14 md:h-10 md:px-4.5"
+               href="mailto:felix@triptix.tech">
+                Get in touch
+                <svg xmlns="http://www.w3.org/2000/svg" width="6" height="12" fill="none" class="mt-px"
+                     aria-hidden="true">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                          stroke-width="1.6"
+                          d="m1 1 4 4-4 4"></path>
+                </svg>
+            </a>
+        </div>
+
+        <!-- DEMO
+        <div class="md:pt-[65px]">
+            <div class="bg-zinc-900 rounded-[1.5em] z-10 mb-20 md:mb-0">
+                <div class="flex items-center marker">
+                    <input placeholder="Search" autocomplete="off"
+                           class="p-4 w-100 bg-transparent text-white w-full focus:outline-none focus:ring-0 ml-4 mt-4"
+                           value="Wall Street">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewbox="0 -960 960 960" height="32" width="32"
+                         class="mr-8 mt-4">
+                        <path class="fill-ttblue"
+                              d="M784-120 532-372q-30 24-69 38t-83 14q-109 0-184.5-75.5T120-580q0-109 75.5-184.5T380-840q109 0 184.5 75.5T640-580q0 44-14 83t-38 69l252 252-56 56ZM380-400q75 0 127.5-52.5T560-580q0-75-52.5-127.5T380-760q-75 0-127.5 52.5T200-580q0 75 52.5 127.5T380-400Z"></path>
+                    </svg>
+                </div>
+                <ul class="mt-2 mx-4 pb-4 text-white max-w-full">
+                    <li class="flex p-4 max-w-full">
+                        <span class="pr-4">
+                            <svg class="fill-ttblue" xmlns="http://www.w3.org/2000/svg" height="24"
+                                 viewbox="0 -960 960 960" width="24">
+                                <path d="M480-480q33 0 56.5-23.5T560-560q0-33-23.5-56.5T480-640q-33 0-56.5 23.5T400-560q0 33 23.5 56.5T480-480Zm0 294q122-112 181-203.5T720-552q0-109-69.5-178.5T480-800q-101 0-170.5 69.5T240-552q0 71 59 162.5T480-186Zm0 106Q319-217 239.5-334.5T160-552q0-150 96.5-239T480-880q127 0 223.5 89T800-552q0 100-79.5 217.5T480-80Zm0-480Z"></path>
+                            </svg>
+                        </span>
+                        <span class="align-baseline whitespace-nowrap max-w-full overflow-hidden text-ellipsis">Bartholomäuskirche Wald-Amorbach</span>
+                        <span class="ml-2 text-gray-400 text-sm items-end align-baseline leading-loose whitespace-nowrap max-w-full overflow-hidden text-ellipsis">New York, USA</span>
+                    </li>
+                    <li class="flex p-4">
+                        <span class="pr-4">
+                            <svg class="fill-ttblue" xmlns="http://www.w3.org/2000/svg" height="24"
+                                 viewbox="0 -960 960 960" width="24">
+                                <path d="M480-480q33 0 56.5-23.5T560-560q0-33-23.5-56.5T480-640q-33 0-56.5 23.5T400-560q0 33 23.5 56.5T480-480Zm0 294q122-112 181-203.5T720-552q0-109-69.5-178.5T480-800q-101 0-170.5 69.5T240-552q0 71 59 162.5T480-186Zm0 106Q319-217 239.5-334.5T160-552q0-150 96.5-239T480-880q127 0 223.5 89T800-552q0 100-79.5 217.5T480-80Zm0-480Z"></path>
+                            </svg>
+                        </span>
+                        <span class="align-baseline whitespace-nowrap">Wallkill</span>
+                        <span class="ml-2 text-gray-400 text-sm items-end align-baseline leading-loose whitespace-nowrap max-w-full overflow-hidden text-ellipsis">New York, USA</span>
+                    </li>
+                    <li class="flex p-4">
+                        <span class="pr-4">
+                            <svg class="fill-ttblue" xmlns="http://www.w3.org/2000/svg" height="24"
+                                 viewbox="0 -960 960 960" width="24">
+                                <path d="M480-480q33 0 56.5-23.5T560-560q0-33-23.5-56.5T480-640q-33 0-56.5 23.5T400-560q0 33 23.5 56.5T480-480Zm0 294q122-112 181-203.5T720-552q0-109-69.5-178.5T480-800q-101 0-170.5 69.5T240-552q0 71 59 162.5T480-186Zm0 106Q319-217 239.5-334.5T160-552q0-150 96.5-239T480-880q127 0 223.5 89T800-552q0 100-79.5 217.5T480-80Zm0-480Z"></path>
+                            </svg>
+                        </span>
+                        <span class="align-baseline whitespace-nowrap">Wall Street</span>
+                        <span class="ml-2 text-gray-400 text-sm items-end align-baseline leading-loose whitespace-nowrap max-w-full overflow-hidden text-ellipsis">Manhatten, New York, USA</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        -->
+    </div>
+
+    <!-- FEATURES
+    <ul class="sm:mt-12 px-8 mx-auto max-w-7xl grid grid-cols-1 md:grid-cols-4 gap-10 mb-16 sm:mb-24 md:mb-0 text-center sm:text-left">
+        <li class="block rounded-[1.5em]">
+            <h1 class="pb-2 sm:pb-4 font-bold text-2xl flex flex-row gap-3 items-center justify-center sm:justify-start">
+                <svg xmlns="http://www.w3.org/2000/svg" height="32" viewbox="0 -960 960 960" width="32">
+                    <defs>
+                        <lineargradient id="myGradient">
+                            <stop offset="0" stop-color="#53bff9"></stop>
+                            <stop offset="1" stop-color="#da35cc"></stop>
+                        </lineargradient>
+                        <lineargradient id="gradientA" xlink:href="#myGradient"
+                                        gradienttransform="rotate(30)">
+                        </lineargradient>
+                    </defs>
+                    <path fill="url(#gradientA)"
+                          d="M480-79q-16 0-30.5-6T423-102L102-423q-11-12-17-26.5T79-480q0-16 6-31t17-26l321-321q12-12 26.5-17.5T480-881q16 0 31 5.5t26 17.5l321 321q12 11 17.5 26t5.5 31q0 16-5.5 30.5T858-423L537-102q-11 11-26 17t-31 6Zm0-80 321-321-321-321-321 321 321 321Zm-40-281h80v-240h-80v240Zm40 120q17 0 28.5-11.5T520-360q0-17-11.5-28.5T480-400q-17 0-28.5 11.5T440-360q0 17 11.5 28.5T480-320Zm0-160Z"></path>
+                </svg>
+                <span>Typo Tolerant</span>
+            </h1>
+            <p>Everyone makes typos. Our fuzzy string matching doesn't care. </p>
+        </li>
+        <li class="block rounded-[1.5em]">
+            <h1 class="pb-2 sm:pb-4 font-bold text-2xl flex flex-row gap-3 items-center justify-center sm:justify-start">
+                <svg xmlns="http://www.w3.org/2000/svg" height="24" viewbox="0 -960 960 960" width="24">
+                    <defs>
+                        <lineargradient id="gradientB" xlink:href="#myGradient"
+                                        gradienttransform="rotate(130)">
+                        </lineargradient>
+                    </defs>
+                    <path fill="url(#gradientB)"
+                          d="m226-559 78 33q14-28 29-54t33-52l-56-11-84 84Zm142 83 114 113q42-16 90-49t90-75q70-70 109.5-155.5T806-800q-72-5-158 34.5T492-656q-42 42-75 90t-49 90Zm178-65q-23-23-23-56.5t23-56.5q23-23 57-23t57 23q23 23 23 56.5T660-541q-23 23-57 23t-57-23Zm19 321 84-84-11-56q-26 18-52 32.5T532-299l33 79Zm313-653q19 121-23.5 235.5T708-419l20 99q4 20-2 39t-20 33L538-80l-84-197-171-171-197-84 167-168q14-14 33.5-20t39.5-2l99 20q104-104 218-147t235-24ZM157-321q35-35 85.5-35.5T328-322q35 35 34.5 85.5T327-151q-25 25-83.5 43T82-76q14-103 32-161.5t43-83.5Zm57 56q-10 10-20 36.5T180-175q27-4 53.5-13.5T270-208q12-12 13-29t-11-29q-12-12-29-11.5T214-265Z"></path>
+                </svg>
+                <span>Fast</span>
+            </h1>
+            <p>Create snappy apps with suggestions computed in 100 ms. </p>
+        </li>
+        <li class="block rounded-[1.5em]">
+            <h1 class="pb-2 sm:pb-4 font-bold text-2xl flex flex-row gap-3 items-center justify-center sm:justify-start">
+                <svg xmlns="http://www.w3.org/2000/svg" height="32" viewbox="0 -960 960 960" width="32">
+                    <defs>
+                        <lineargradient id="gradientC" xlink:href="#myGradient"
+                                        gradienttransform="rotate(50)">
+                        </lineargradient>
+                    </defs>
+                    <path fill="url(#gradientC)"
+                          d="m476-80 182-480h84L924-80h-84l-42-122H604L560-80h-84Zm152-192h144l-70-198h-4l-70 198Zm-468 72-56-56 202-202q-38-42-66.5-87T190-640h84q18 36 38.5 65t49.5 61q44-48 73-98.5T484-720H40v-80h280v-80h80v80h280v80H564q-21 71-57 138t-89 126l96 98-30 82-124-124-200 200Z"></path>
+                </svg>
+                <span>Multilingual</span>
+            </h1>
+            <p>Find addresses or Points of Interest in any language!</p>
+        </li>
+        <li class="block rounded-[1.5em]">
+            <h1 class="pb-2 sm:pb-4 font-bold text-2xl flex flex-row gap-3 items-center justify-center sm:justify-start">
+                <svg xmlns="http://www.w3.org/2000/svg" height="32" viewbox="0 -960 960 960" width="32">
+                    <defs>
+                        <lineargradient id="gradientD" xlink:href="#myGradient"
+                                        gradienttransform="rotate(90)">
+                        </lineargradient>
+                    </defs>
+                    <path fill="url(#gradientD)"
+                          d="M480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm-40-82v-78q-33 0-56.5-23.5T360-320v-40L168-552q-3 18-5.5 36t-2.5 36q0 121 79.5 212T440-162Zm276-102q20-22 36-47.5t26.5-53q10.5-27.5 16-56.5t5.5-59q0-98-54.5-179T600-776v16q0 33-23.5 56.5T520-680h-80v80q0 17-11.5 28.5T400-560h-80v80h240q17 0 28.5 11.5T600-440v120h40q26 0 47 15.5t29 40.5Z"></path>
+                </svg>
+                <span>Global</span>
+            </h1>
+            <p>Worldwide coverage. Optionally restrict the search to certain areas.</p>
+        </li>
+    </ul>
+    -->
+</SiteLayout>

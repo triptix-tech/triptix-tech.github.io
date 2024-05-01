@@ -1,0 +1,18 @@
+---
+import ObjectProperty from './ObjectProperty.astro';
+
+interface Props {
+    errors: string[];
+}
+const {errors = []} = Astro.props;
+---
+
+{
+    errors.length !== 0 &&
+    <div class="p-4 my-4 text-sm rounded-lg bg-red-950 border-red-500 text-white border-2 border font-bold w-full shadow-[0_6px_20px_rgba(255,0,0,.45)]">
+        <p>Error:</p>
+        <ul class="list-disc mt-2 gap-2 flex flex-col pl-4">
+            { errors.map(msg => (<li><span set:html={msg}></span></li>)) }
+        </ul>
+    </div>
+}

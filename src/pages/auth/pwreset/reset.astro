@@ -1,0 +1,134 @@
+---
+export const prerender = false;
+
+import {AdvancedRuntime} from "@astrojs/cloudflare";
+import {getAuth, isEmailValid, isPasswordValid} from "../../../lib/lucia";
+import {isTurnStileValid} from "../../../lib/turnstile";
+import {isWithinExpiration} from "lucia/utils";
+import {getDB} from "../../../lib/lucia";
+import {isDevMode} from "../../../lib/devmode";
+import {turnStileSiteKey} from "../../../lib/turnstile";
+import SiteLayout from '../../../layouts/SiteLayout.astro';
+import ErrorMessage from '../../../components/ErrorMessage.astro';
+
+const token = Astro.url.searchParams.get('token');
+
+const MILLISECOND = 1;
+const SECOND = MILLISECOND * 1000;
+const MINUTE = SECOND * 60;
+const HOUR = MINUTE * 60;
+
+const validatePasswordResetToken = async (runtime: AdvancedRuntime, token: string) => {
+    const db = getDB(runtime);
+    const storedToken = await db
+        .selectFrom('password_reset_token')
+        .where('token', "=", token)
+        .selectAll()
+        .executeTakeFirst();
+    if (storedToken) {
+        await db.deleteFrom('password_reset_token')
+            .where('token', '=', token)
+            .executeTakeFirst();
+        if (!isWithinExpiration(Number(storedToken.expires))) {
+            console.log('token expired: ', token, storedToken.expires, Number(storedToken.expires) - HOUR * 2);
+            return false;
+        }
+    } else {
+        return false;
+    }
+    return storedToken.user_id;
+}
+
+const errors = [];
+if (token === null) {
+    errors.push('No password reset token given. Maybe you didn\'t copy the complete URL?');
+}
+
+if (Astro.request.method === 'POST') {
+    try {
+        const formData = await Astro.request.formData();
+        const token = formData.get('token') as string;
+        const password = formData.get('password') as string;
+
+        const validPassword = isPasswordValid(password);
+        if (!validPassword) {
+            errors.push('Invalid password (required: at least 8 characters)');
+        }
+
+        const userId = await validatePasswordResetToken(Astro.locals.runtime, token);
+        if (!userId) {
+            errors.push('Invalid token');
+        }
+
+        const turnStileValid = await isTurnStileValid(formData, isDevMode(Astro));
+        if (!turnStileValid) {
+            errors.push('Challenge not solved')
+        }
+
+        if (validPassword && turnStileValid && userId) {
+            const auth = getAuth(Astro.locals.runtime);
+
+            console.log("userId=", userId);
+            let user = await auth.getUser(userId);
+            console.log("user=", user);
+            await auth.invalidateAllUserSessions(user.userId);
+            await auth.updateKeyPassword("email", user.email, password);
+
+            if (!user.emailVerified) {
+                user = await auth.updateUserAttributes(user.userId, {
+                    email_verified: 1
+                });
+            }
+
+            const session = await auth.createSession({
+                userId: user.userId,
+                attributes: {}
+            });
+            const sessionCookie = auth.createSessionCookie(session);
+            return new Response(null, {
+                headers: {
+                    Location: "/auth/ccp/apikeys?success=pwreset",
+                    "Set-Cookie": sessionCookie.serialize()
+                },
+                status: 302
+            });
+        }
+    } catch (e) {
+        errors.push('Invalid token.');
+        console.error({message: e.message});
+        console.error(e.stack);
+    }
+}
+
+const turnStileKey = isDevMode(Astro) ? '1x00000000000000000000AA' : turnStileSiteKey;
+---
+
+<SiteLayout>
+    <div class="flex mx-auto flex-col justify-center grow py-8">
+        <div class="mx-auto max-w-xs">
+            {errors.length !== 0 &&
+                    <ErrorMessage errors={errors}/>}
+            <form method="post">
+                <input class="mt-4 w-full px-8 py-4 rounded-lg text-white font-medium bg-zinc-950 border border-gray-400 placeholder-gray-400 text-sm focus:outline-none focus:border-gray-400 focus:bg-zinc-900"
+                       name="password"
+                       type="password"
+                       placeholder="Password"/>
+
+                <input name="token" type="hidden" value={token}/>
+
+                <div class="flex justify-center mt-4 cf-turnstile" data-theme="dark" data-sitekey={turnStileKey}></div>
+                <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+
+                <button type="submit"
+                        class="mt-6 w-full inline-flex items-center justify-center transition-colors hover:text-grey-80 gap-2 rounded-lg border-2 border-white text-white h-11 px-[22px] text-16 font-medium leading-snug tracking-tighter shadow-[0_6px_16px_rgba(255,255,255,.2)] hover:shadow-[0_6px_20px_rgba(255,255,255,.4)] hover:-translate-y-0.5 duration-200 md:text-14 md:h-10 md:px-4.5">
+                    Request Reset
+                    <svg xmlns="http://www.w3.org/2000/svg" width="6" height="12" fill="none" class="mt-px"
+                         aria-hidden="true">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6"
+                              d="m1 1 4 4-4 4"></path>
+                    </svg>
+                </button>
+            </form>
+        </div>
+    </div>
+</SiteLayout>

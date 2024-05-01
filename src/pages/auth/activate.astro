@@ -1,0 +1,55 @@
+---
+export const prerender = false;
+
+import {isWithinExpiration} from "lucia/utils";
+import {getDB} from "../../lib/lucia";
+import SiteLayout from '../../layouts/SiteLayout.astro';
+import ErrorMessage from '../../components/ErrorMessage.astro';
+import SuccessMessage from '../../components/SuccessMessage.astro';
+
+const token = Astro.url.searchParams.get('token');
+
+const MILLISECOND = 1;
+const SECOND = MILLISECOND * 1000;
+const MINUTE = SECOND * 60;
+const HOUR = MINUTE * 60;
+
+const errors = [];
+if (token === null) {
+    errors.push('No activation token given. Maybe you didn\'t copy the complete URL?');
+} else {
+    try {
+        const db = getDB(Astro.locals.runtime);
+        const storedToken = await db
+            .selectFrom('email_verification_token')
+            .where('token', "=", token)
+            .selectAll()
+            .execute();
+        if (storedToken && storedToken.length !== 0) {
+            await db.deleteFrom('email_verification_token')
+                .where('token', '=', token)
+                .executeTakeFirst();
+            if (!isWithinExpiration(Number(storedToken.expires) - HOUR)) {
+                errors.push('Token expired.');
+            } else {
+                // TODO: update user table -> email_verified = true
+            }
+        } else {
+            errors.push('Invalid token.');
+        }
+    } catch (e) {
+        errors.push('Invalid token.');
+    }
+}
+---
+
+<SiteLayout classNames={['w-full justify-center']}>
+    <div class="mx-auto">
+        <ErrorMessage errors={errors}/>
+        {
+            errors.length === 0 &&
+                <SuccessMessage
+                        msg='E-Mail verification successful. Proceed to <a class="underline" id="proceed" href="/auth/ccp/apikeys">Settings</a>'/>
+        }
+    </div>
+</SiteLayout>

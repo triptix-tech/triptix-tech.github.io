@@ -1,0 +1,42 @@
+---
+import {marked} from "marked";
+import ObjectProperties from './ObjectProperties.astro';
+const {key, value, required=[], topLevel=false} = Astro.props;
+---
+
+<tr class="property">
+    <td class="py-2" class:list={[{'px-3': !topLevel}]}>
+        <div class="pt-1 pr-1 pb-6 border-b border-zinc-900">
+            <div>
+                <code class="text-ttblue font-semibold text-sm bg-zinc-800 p-1 rounded-lg">
+                    {key}
+                </code>
+                <code class="text-xs text-gray-400 pl-2">
+                    {value.type}
+                    {value.type === 'array' && <span>&lt;{value.items.type}&gt;</span>}
+                </code>
+                { value.default && <span class="px-2 font-mono text-xs text-gray-400">default={value.default}</span> }
+                {(value.required || required.indexOf(key) != -1) &&
+                        <span class="uppercase font-semibold font-mono text-xs text-yellow-600 pl-3">Required</span>}
+            </div>
+            { value.enum &&
+                <div class="pt-2">
+                  <p class="my-2">Supported values:</p>
+                  <p class="my-2">
+                      {value.enum?.map(el => (
+                        <div class="float-left bg-gray-700 rounded m-1 p-1 text-xs font-mono">{el}</div>))}
+                  </p>
+                </div>
+                <div class="clear-both"></div>
+            }
+            <div class="pl-1 pt-2">
+                {value.description &&
+                    <div class="prose prose-invert max-w-none" set:html={marked.parse(value.description)}></div>}
+            </div>
+            {value.type === 'object' &&
+                    <ObjectProperties spec={value} nested={!topLevel}/>}
+            {value.type === 'array' && value.items.type == 'object' &&
+                    <ObjectProperties spec={value.items} nested={!topLevel}/>}
+        </div>
+    </td>
+</tr>

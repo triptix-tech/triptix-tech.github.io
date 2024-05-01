@@ -1,0 +1,205 @@
+---
+import SiteLayout from '../layouts/SiteLayout.astro';
+---
+
+<SiteLayout classNames="bg-zinc-900 justify-center">
+    <div class="mx-auto max-w-7xl">
+        <section id="pricing" class="p-8 py-10 md:mt-0 text-white justify-center flex items-center">
+            <div class="mx-auto max-w-7xl">
+                <div class="text-center mb-12">
+                    <h2 class="mb-4 pb-1 text-5xl tracking-tight font-extrabold bg-gradient-to-r from-ttblue to-ttpink bg-clip-text text-transparent">
+                        Pricing
+                    </h2>
+                </div>
+                <div class="grid sm:grid-cols-1 md:grid-cols-3 gap-10 lg:gap-30 max-w-6xl">
+                    <div class="flex flex-col w-full p-6 mx-auto text-center bg-zinc-950 rounded-lg drop-shadow-xl p-8 bg-zinc-900">
+                        <h3 class="text-3xl font-semibold">
+                            Free Tier
+                        </h3>
+                        <div class="flex justify-center items-baseline mb-4 mt-8">
+                            <span class="mr-2 text-5xl font-extrabold text-ttpink">$0</span>
+                        </div>
+                        <span class="text-sm mb-4">No credit credit card required</span>
+                        <ul role="list" class="mb-8 space-y-4 mt-4 text-left">
+                            <li class="flex items-center space-x-3">
+                                <svg class="flex-shrink-0 w-5 h-5 text-ttblue" fill="currentColor"
+                                     viewbox="0 0 20 20"
+                                     xmlns="http://www.w3.org/2000/svg">
+                                    <path fill-rule="evenodd"
+                                          d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                          clip-rule="evenodd"></path>
+                                </svg>
+                                <span>Up to 10,000 requests</span>
+                            </li>
+                            <li class="flex items-center space-x-3">
+                                <svg class="flex-shrink-0 w-5 h-5 text-ttblue" fill="currentColor"
+                                     viewbox="0 0 20 20"
+                                     xmlns="http://www.w3.org/2000/svg">
+                                    <path fill-rule="evenodd"
+                                          d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                          clip-rule="evenodd"></path>
+                                </svg>
+                                <span>Geocoding</span>
+                            </li>
+                            <li class="flex items-center space-x-3">
+                                <svg class="flex-shrink-0 w-5 h-5 text-ttblue" fill="currentColor"
+                                     viewbox="0 0 20 20"
+                                     xmlns="http://www.w3.org/2000/svg">
+                                    <path fill-rule="evenodd"
+                                          d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                          clip-rule="evenodd"></path>
+                                </svg>
+                                <span>Reverse Geocoding</span>
+                            </li>
+                            <li class="flex items-center space-x-3">
+                                <svg class="flex-shrink-0 w-5 h-5 text-ttblue" fill="currentColor"
+                                     viewbox="0 0 20 20"
+                                     xmlns="http://www.w3.org/2000/svg">
+                                    <path fill-rule="evenodd"
+                                          d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                          clip-rule="evenodd"></path>
+                                </svg>
+                                <span>Typo robust address typeahead</span>
+                            </li>
+                            <li class="flex items-center space-x-3">
+                                <svg class="flex-shrink-0 w-5 h-5 text-ttblue" fill="currentColor"
+                                     viewbox="0 0 20 20"
+                                     xmlns="http://www.w3.org/2000/svg">
+                                    <path fill-rule="evenodd"
+                                          d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                          clip-rule="evenodd"></path>
+                                </svg>
+                                <span>API-compatible to Google Places, MapBox, and Pelias</span>
+                            </li>
+                        </ul>
+                        <a href="/docs"
+                           class="bg-gradient-to-r from-blue-500 to-purple-500 text-white font-semibold rounded p-1 transition-shadow transition-colors glow hover:-translate-y-0.5 transition-transform duration-200">
+                            <span class="flex w-full bg-zinc-900 rounded p-2 justify-center">Get Started</span>
+                        </a>
+                    </div>
+                    <div class="flex flex-col w-full p-6 mx-auto text-center bg-zinc-950 rounded-lg drop-shadow-xl p-8 bg-zinc-900">
+                        <h3 class="text-3xl font-semibold">
+                            Pay-as-you-go
+                        </h3>
+                        <div class="flex justify-center items-baseline mb-4 mt-8">
+                            <span class="mr-2 text-5xl font-extrabold text-ttblue">$1</span> <span
+                                class="text-ttblue">/1,000 requests</span>
+                        </div>
+                        <span class="text-sm mb-4">Minimum charge of $5/mo</span>
+                        <ul role="list" class="mb-8 space-y-4 mt-4 text-left">
+                            <li class="flex items-center space-x-3">
+                                <svg class="flex-shrink-0 w-5 h-5 text-ttblue" fill="currentColor"
+                                     viewbox="0 0 20 20"
+                                     xmlns="http://www.w3.org/2000/svg">
+                                    <path fill-rule="evenodd"
+                                          d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                          clip-rule="evenodd"></path>
+                                </svg>
+                                <span>Unlimited requests</span>
+                            </li>
+                            <li class="flex items-center space-x-3">
+                                <svg class="flex-shrink-0 w-5 h-5 text-ttblue" fill="currentColor"
+                                     viewbox="0 0 20 20"
+                                     xmlns="http://www.w3.org/2000/svg">
+                                    <path fill-rule="evenodd"
+                                          d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                          clip-rule="evenodd"></path>
+                                </svg>
+                                <span>Geocoding</span>
+                            </li>
+                            <li class="flex items-center space-x-3">
+                                <svg class="flex-shrink-0 w-5 h-5 text-ttblue" fill="currentColor"
+                                     viewbox="0 0 20 20"
+                                     xmlns="http://www.w3.org/2000/svg">
+                                    <path fill-rule="evenodd"
+                                          d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                          clip-rule="evenodd"></path>
+                                </svg>
+                                <span>Reverse Geocoding</span>
+                            </li>
+                            <li class="flex items-center space-x-3">
+                                <svg class="flex-shrink-0 w-5 h-5 text-ttblue" fill="currentColor"
+                                     viewbox="0 0 20 20"
+                                     xmlns="http://www.w3.org/2000/svg">
+                                    <path fill-rule="evenodd"
+                                          d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                          clip-rule="evenodd"></path>
+                                </svg>
+                                <span>Typo robust address typeahead</span>
+                            </li>
+                            <li class="flex items-center space-x-3">
+                                <svg class="flex-shrink-0 w-5 h-5 text-ttblue" fill="currentColor"
+                                     viewbox="0 0 20 20"
+                                     xmlns="http://www.w3.org/2000/svg">
+                                    <path fill-rule="evenodd"
+                                          d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                          clip-rule="evenodd"></path>
+                                </svg>
+                                <span>API-compatible to Google Places, MapBox, and Pelias</span>
+                            </li>
+                        </ul>
+                        <a href="/docs"
+                           class="bg-gradient-to-r from-blue-500 to-purple-500 text-white font-semibold rounded p-1 transition-shadow transition-colors glow hover:-translate-y-0.5 transition-transform duration-200">
+                            <span class="flex w-full bg-zinc-900 rounded p-2 justify-center">Get Started</span>
+                        </a>
+                    </div>
+                    <div class="flex flex-col w-full p-6 mx-auto text-center bg-zinc-950 rounded-lg drop-shadow-xl p-8 bg-zinc-900">
+                        <h3 class="text-3xl font-semibold">
+                            Talk to us!
+                        </h3>
+                        <div class="flex justify-center items-baseline mb-4 mt-8">
+                            <span class="mr-2 text-5xl font-extrabold text-white">Custom</span>
+                        </div>
+                        <span class="text-sm mb-4">Tell us what you need!</span>
+                        <ul role="list" class="mb-8 space-y-4 mt-4 text-left h-full">
+                            <li class="flex items-center space-x-3">
+                                <svg class="flex-shrink-0 w-5 h-5 text-ttblue" fill="currentColor"
+                                     viewbox="0 0 20 20"
+                                     xmlns="http://www.w3.org/2000/svg">
+                                    <path fill-rule="evenodd"
+                                          d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                          clip-rule="evenodd"></path>
+                                </svg>
+                                <span>Custom dataset</span>
+                            </li>
+                            <li class="flex items-center space-x-3">
+                                <svg class="flex-shrink-0 w-5 h-5 text-ttblue" fill="currentColor"
+                                     viewbox="0 0 20 20"
+                                     xmlns="http://www.w3.org/2000/svg">
+                                    <path fill-rule="evenodd"
+                                          d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                          clip-rule="evenodd"></path>
+                                </svg>
+                                <span>Missing a feature?</span>
+                            </li>
+                            <li class="flex items-center space-x-3">
+                                <svg class="flex-shrink-0 w-5 h-5 text-ttblue" fill="currentColor"
+                                     viewbox="0 0 20 20"
+                                     xmlns="http://www.w3.org/2000/svg">
+                                    <path fill-rule="evenodd"
+                                          d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                          clip-rule="evenodd"></path>
+                                </svg>
+                                <span>Custom pricing >10M req/month</span>
+                            </li>
+                            <li class="flex items-center space-x-3">
+                                <svg class="flex-shrink-0 w-5 h-5 text-ttblue" fill="currentColor"
+                                     viewbox="0 0 20 20"
+                                     xmlns="http://www.w3.org/2000/svg">
+                                    <path fill-rule="evenodd"
+                                          d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                          clip-rule="evenodd"></path>
+                                </svg>
+                                <span>Enterprise support for your deployment or Bring Your Own Cloud (BYOC)</span>
+                            </li>
+                        </ul>
+                        <a href="mailto:felix@triptix.tech"
+                           class="bg-gradient-to-r from-blue-500 to-purple-500 text-white font-semibold rounded p-1 transition-shadow transition-colors glow hover:-translate-y-0.5 transition-transform duration-200">
+                            <span class="flex w-full bg-zinc-900 rounded p-2 justify-center">Contact us</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+</SiteLayout>

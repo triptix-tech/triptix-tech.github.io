@@ -1,0 +1,82 @@
+---
+export const prerender = false;
+
+import {getAuth} from "../../../lib/lucia";
+import CCP from '../../../layouts/CCP.astro';
+
+const authRequest = getAuth(Astro.locals.runtime).handleRequest(Astro);
+const session = await authRequest.validate();
+if (session == null) {
+    return new Response(null, {
+        headers: {
+            Location: "/auth/login"
+        },
+        status: 302
+    });
+}
+
+const invoices = [
+    {
+        date: '2024/07/10',
+        plan: 'Pay as You Go Plan - Monthly',
+        amount: '$3324.21'
+    },
+    {
+        date: '2024/08/10',
+        plan: 'Pay as You Go Plan - Monthly',
+        amount: '$3454.45'
+    },
+    {
+        date: '2024/09/10',
+        plan: 'Pay as You Go Plan - Monthly',
+        amount: '$2454.44'
+    }
+]
+---
+
+<CCP>
+    <table class="table-auto w-full">
+        <!-- Table header -->
+        <thead class="text-xs uppercase text-gray-200">
+        <tr class="hidden flex flex-wrap md:table-row md:flex-no-wrap">
+            <th class="w-full block md:w-auto md:table-cell py-2">
+                <div class="font-semibold text-left">Date</div>
+            </th>
+            <th class="w-full hidden md:w-auto md:table-cell py-2">
+                <div class="font-semibold text-left">Plan</div>
+            </th>
+            <th class="w-full hidden md:w-auto md:table-cell py-2">
+                <div class="font-semibold text-left">Amount</div>
+            </th>
+            <th class="w-full hidden md:w-auto md:table-cell py-2">
+                <div class="font-semibold text-right">Download</div>
+            </th>
+        </tr>
+        </thead>
+
+        <tbody>
+        {
+            invoices.map(({date, plan, amount}) =>
+                    <tr class="flex flex-wrap md:table-row md:flex-no-wrap border-b border-gray-600 py-4 md:py-0 last:border-b-0">
+                        <td class="w-full block md:w-auto md:table-cell py-0.5 md:py-4">
+                            <div class="text-left">{date}</div>
+                        </td>
+                        <td class="w-full block md:w-auto md:table-cell py-0.5 md:py-4">
+                            <div class="text-left">{plan}</div>
+                        </td>
+                        <td class="w-full block md:w-auto md:table-cell py-0.5 md:py-4">
+                            <div class="text-left">{amount}</div>
+                        </td>
+                        <td class="w-full block md:w-auto md:table-cell py-0.5 md:py-4">
+                            <div class="text-right flex items-center md:justify-end">
+                                <a class="underline hover:text-indigo-400" href="#0">HTML</a>
+                                <span class="block w-px h-4 bg-slate-700 mx-2" aria-hidden="true"></span>
+                                <a class="underline hover:text-indigo-400" href="#0">PDF</a>
+                            </div>
+                        </td>
+                    </tr>
+            )
+        }
+        </tbody>
+    </table>
+</CCP>
