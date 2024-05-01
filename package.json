@@ -31,7 +31,6 @@
     "wrangler": "^3.13.1"
   },
   "optionalDependecies": {
-    "@cloudflare/workerd-darwin-arm64": "^1.20231025.0",
     "@esbuild/darwin-arm64": "^0.19.5"
   }
 }
